@@ -5,3 +5,7 @@
 body {
   margin: 0;
 }
+
+main{
+grid-template-rows: 10% 85% 5%;
+}
