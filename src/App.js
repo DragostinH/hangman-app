@@ -222,10 +222,10 @@ export default function App() {
 
 
   return (
-    <div className="App grid grid-cols-2 grid-rows-2 bg-secondary-200">
+    <div className="App grid grid-cols-3 grid-rows-1 bg-secondary-200">
       {gameSettingsScreen}
       {winLoseScreen}
-      <div className="hangman-picture-container grid items-center">
+      <div className="hangman-picture-container grid items-center justify-center col-span-3">
         <img src={hangmanPicture} alt="hangman" className="hangman-picture" />
         <p className='text-4xl text-center'>{board}</p>
         <div className="clicked-guesses-container bg-slate-800 grid border-[1px] border-primary-50 p-8 rounded-lg gap-4 justify-center">
@@ -238,7 +238,7 @@ export default function App() {
           </div>
         </div>
       </div>
-      <div className='game-buttons-container p-12 text-right'>
+      <div className='game-buttons-container col-span-3 justify-center text-center p-12'>
         <div className='game-buttons-container-inner'>
           <button className='uppercase border-2 px-8 py-4 rounded-lg border-secondary-900 text-secondary-900 bg-primary-200'
             onClick={pauseGame}>Game Settings</button>
