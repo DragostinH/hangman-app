@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/DragostinH/hangman-app/static/css/main.3beea798.css",
+    "main.js": "/DragostinH/hangman-app/static/js/main.65b041ab.js",
+    "static/media/github.png": "/DragostinH/hangman-app/static/media/github.a855c3975c028d8069f5.png",
+    "index.html": "/DragostinH/hangman-app/index.html",
+    "main.3beea798.css.map": "/DragostinH/hangman-app/static/css/main.3beea798.css.map",
+    "main.65b041ab.js.map": "/DragostinH/hangman-app/static/js/main.65b041ab.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3beea798.css",
+    "static/js/main.65b041ab.js"
+  ]
+}
