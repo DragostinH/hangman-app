@@ -97,23 +97,25 @@ export default function App() {
         return word[index] === guess ? letter = guess : letter;
       });
       setBoard(newBoard);
-    }
+    } else {
 
+
+      // Add the guess to the clicked guesses array
+      setClickedGuesses(
+        clickedGuesses.concat(guess),
+      );
+
+      // Reduce the number of tries by 1 and change picture
+      setGameControls({
+        ...gameControls,
+        tries: gameControls.tries - 1,
+      });
+    }
     // if the guess is not in the word, remove the guess from the guesses array
     setGuesses(
       guesses.filter(letter => letter !== guess),
     );
 
-    // Add the guess to the clicked guesses array
-    setClickedGuesses(
-      clickedGuesses.concat(guess),
-    );
-
-    // Reduce the number of tries by 1 and change picture
-    setGameControls({
-      ...gameControls,
-      tries: gameControls.tries - 1,
-    });
 
     setHangmanPicture(hangmanPicts[10 - gameControls.tries]);
   };
