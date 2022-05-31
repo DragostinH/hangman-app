@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/DragostinH/hangman-app/static/css/main.3beea798.css",
-    "main.js": "/DragostinH/hangman-app/static/js/main.65b041ab.js",
-    "static/media/github.png": "/DragostinH/hangman-app/static/media/github.a855c3975c028d8069f5.png",
-    "index.html": "/DragostinH/hangman-app/index.html",
-    "main.3beea798.css.map": "/DragostinH/hangman-app/static/css/main.3beea798.css.map",
-    "main.65b041ab.js.map": "/DragostinH/hangman-app/static/js/main.65b041ab.js.map"
+    "main.css": "/hangman-app/static/css/main.3beea798.css",
+    "main.js": "/hangman-app/static/js/main.5752067a.js",
+    "static/media/github.png": "/hangman-app/static/media/github.a855c3975c028d8069f5.png",
+    "index.html": "/hangman-app/index.html",
+    "main.3beea798.css.map": "/hangman-app/static/css/main.3beea798.css.map",
+    "main.5752067a.js.map": "/hangman-app/static/js/main.5752067a.js.map"
   },
   "entrypoints": [
     "static/css/main.3beea798.css",
-    "static/js/main.65b041ab.js"
+    "static/js/main.5752067a.js"
   ]
 }
