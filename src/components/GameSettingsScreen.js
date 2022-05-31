@@ -21,7 +21,7 @@ export default function GameSettingsScreen(props) {
 
     return (
         <div className="gamescreen-overlay absolute bg-[rgba(0,0,0,0.15)] w-screen h-[90%] flex items-center justify-center">
-            <div className="gamescreen-container border-4 border-primary-500 grid grid-cols-2 items-center bg-primary-900 w-1/2 h-1/2 rounded-xl p-8 text-primary-50">
+            <div className="gamescreen-container border-4 border-primary-500 grid grid-cols-2 items-center bg-primary-900 w-fit h-1/2 rounded-xl p-8 text-primary-50">
                 <h1 className="text-4xl">Game Settings</h1>
                 <div className="border-[1px] p-6 rounded-lg">
                     <form action="" className="grid gap-4">
