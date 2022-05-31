@@ -3,12 +3,23 @@ import React, { useEffect, useState } from 'react';
 import randomWords from 'random-words';
 import shuffleArray from './scripts/shuffleArray';
 import uniqid from 'uniqid';
-import GameScreen from './components/GameScreen';
+import GameSettingsScreen from './components/GameSettingsScreen';
+import WinScreen from './components/WinScreen';
+import LoseScreen from './components/LoseScreen';
+import createLocalStorageStructure from './scripts/createLocalStorageStructure';
+import updateLocalStorage from './scripts/updateLocalStorage';
+import hangmanPics from './scripts/hangmanPics';
+
+
 
 export default function App() {
+  const hangmanPicts = hangmanPics();
+
   let shuffledAlphabet = shuffleArray('abcdefghijklmnopqrstuvwxyz'.split(''));
 
-  let gameScreen;
+  let gameSettingsScreen;
+
+  let winLoseScreen;
 
   const [word, setWord] = useState("");
 
@@ -20,18 +31,21 @@ export default function App() {
 
   const [gameControls, setGameControls] = useState({
     difficulty: '',
-    round: 1,
+    tries: 10,
     gameOver: false,
     gameWon: false,
     gameStarted: false,
-  })
+    gamePaused: true,
+  });
+
+  const [hangmanPicture, setHangmanPicture] = useState(hangmanPicts[0]);
 
   const getWord = () => {
-    // When game loads, get a random word and set the board.
+    // When game loads, get a random word based on difficulty and set the board.
     // Show first and last letter of the word. If they appear elsewhere in the word, show them.
     // If they don't appear, show an underscore.
     const guessArr = [];
-    const randWord = randomWords();
+    const randWord = gameControls.difficulty === 'easy' ? randomWords({ maxLength: 10, exactly: 1 })[0] : randomWords({ maxLength: 20, exactly: 1 })[0];
     const firstLetter = randWord[0];
     const lastLetter = randWord[randWord.length - 1];
 
@@ -52,48 +66,26 @@ export default function App() {
       }
     };
 
-
     createAvailableGuesses(randWord, guessArr);
     shuffleArray(guessArr);
     setGuesses(guessArr);
   };
 
   const handleNewGame = () => {
-    getWord();
-    setClickedGuesses([]);
     setGameControls({
-      difficulty: '',
-      round: 1,
+      tries: 10,
       gameOver: false,
       gameWon: false,
       gameStarted: true,
+      gamePaused: false,
     });
+
+    setHangmanPicture(hangmanPicts[0]);
+
+    getWord();
+
+    setClickedGuesses([]);
   }
-
-  useEffect(() => {
-    // handleNewGame();
-  }, []);
-
-  const checkWin = () => {
-    if (board.join('') === word) {
-      alert('You win!');
-      setGameControls({
-        ...gameControls,
-        gameWon: true,
-        gameOver: true,
-      });
-    } else if (gameControls.round === 10 || clickedGuesses.length === 9) {
-      alert('You lost!');
-      setGameControls({
-        ...gameControls,
-        gameOver: true,
-      });
-    }
-  }
-
-
-
-
 
   const handleGuess = (e) => {
     // if the guess is in the word, replace the _ with the letter
@@ -117,27 +109,142 @@ export default function App() {
       clickedGuesses.concat(guess),
     );
 
-    // Increase the round by 1 for every guess
+    // Reduce the number of tries by 1 and change picture
     setGameControls({
       ...gameControls,
-      round: gameControls.round + 1,
+      tries: gameControls.tries - 1,
     });
 
-    checkWin();
+    setHangmanPicture(hangmanPicts[10 - gameControls.tries]);
   };
 
+  // Check if there is local storage structure set. If there is update states to match
+  useEffect(() => {
+    const parsedStorage = JSON.parse(localStorage.getItem('hangman'));
+    if (parsedStorage) {
+      setGameControls(parsedStorage.gameSettings);
+      setWord(parsedStorage.word);
+      setBoard(parsedStorage.board);
+      setGuesses(parsedStorage.guesses);
+      setClickedGuesses(parsedStorage.clickedGuesses);
+      setHangmanPicture(parsedStorage.hangmanPicture);
+    }
+  }, []);
 
-  if (!gameControls.gameStarted) {
-    gameScreen = <GameScreen
-      handleNewGame={handleNewGame}
-    />
+  // Track changes to the game and update game settings
+  useEffect(() => {
+    if (gameControls.gameStarted) {
+      if (gameControls.tries === 0 && board.join('') === word) {
+        setGameControls({
+          ...gameControls,
+          gameWon: true,
+          gameOver: true,
+        });
+      } else if (gameControls.tries === 0 && board.join('') !== word) {
+        setGameControls({
+          ...gameControls,
+          gameOver: true,
+          gameStarted: false,
+        });
+      } else if (board.join('') === word) {
+        setGameControls({
+          ...gameControls,
+          gameWon: true,
+          gameOver: true,
+          gameStarted: false,
+        });
+      }
+    }
+  }, [board, gameControls, gameControls.gameStarted, gameControls.tries, word, clickedGuesses]);
+
+
+  // Update local storage when game settings change
+  useEffect(() => {
+    const data = {
+      gameSettings: gameControls,
+      word: word,
+      board: board,
+      guesses: guesses,
+      clickedGuesses: clickedGuesses,
+      hangmanPicture: hangmanPicture,
+    };
+    const parsedStorage = JSON.parse(localStorage.getItem('hangman'));
+    if (!parsedStorage) {
+      createLocalStorageStructure();
+    } else {
+      updateLocalStorage(data);
+    }
+  }, [gameControls, word, board, guesses, hangmanPicture, clickedGuesses]);
+
+
+
+
+  const pauseGame = (e) => {
+    setGameControls({
+      ...gameControls,
+      gamePaused: true,
+    });
+  };
+
+  const resumeGame = (e) => {
+    setGameControls({
+      ...gameControls,
+      gamePaused: false,
+    })
   }
 
 
+  if (gameControls.gamePaused) {
+    gameSettingsScreen = <GameSettingsScreen
+      handleNewGame={handleNewGame}
+      gameControls={gameControls}
+      pauseGame={pauseGame}
+      resumeGame={resumeGame}
+    />
+  }
+
+  if (gameControls.gameOver) {
+    if (gameControls.gameWon) {
+      winLoseScreen = <WinScreen
+        handleNewGame={handleNewGame}
+        word={word}
+        gameControls={gameControls}
+        openGameSettings={pauseGame}
+      />
+    } else {
+      winLoseScreen = <LoseScreen
+        handleNewGame={handleNewGame}
+        word={word}
+      />
+    }
+  }
+
+
+
   return (
-    <div className="App grid grid-cols-2 items-center justify-around bg-secondary-200">
-      <div className="game-container flex flex-col items-center gap-12">
-        <p className='text-4xl'>{board}</p>
+    <div className="App grid grid-cols-2 grid-rows-2 bg-secondary-200">
+      {gameSettingsScreen}
+      {winLoseScreen}
+      <div className="hangman-picture-container grid items-center">
+        <img src={hangmanPicture} alt="hangman" className="hangman-picture" />
+        <p className='text-4xl text-center'>{board}</p>
+        <div className="clicked-guesses-container bg-slate-800 grid border-[1px] border-primary-50 p-8 rounded-lg gap-4 justify-center">
+          <h2 className='text-secondary-200 font-bold uppercase '>Clicked Guesses</h2>
+          <div className="clicked-guesses">
+            {clickedGuesses.map((guess) => {
+              return <button key={uniqid()} className="text-3xl text-purple-400 p-2 border-2
+              border-primary-50 rounded-md">{guess}</button>
+            })}
+          </div>
+        </div>
+      </div>
+      <div className='game-buttons-container p-12 text-right'>
+        <div className='game-buttons-container-inner'>
+          <button className='uppercase border-2 px-8 py-4 rounded-lg border-secondary-900 text-secondary-900 bg-primary-200'
+            onClick={pauseGame}>Game Settings</button>
+        </div>
+      </div>
+      <div className="game-container col-span-3 flex justify-center items-center gap-12">
         <div className="guesses-container grid border-[1px] border-primary-400 bg-secondary-900 p-8 rounded-lg gap-4 justify-center">
           <div className="available-guesses flex items-center justify-center flex-wrap gap-4">
             {guesses.map((guess) => {
@@ -152,21 +259,8 @@ export default function App() {
           </div>
         </div>
 
-        <div className="clicked-guesses-container bg-slate-800 grid border-[1px] border-primary-50 p-8 rounded-lg gap-4 justify-center">
-          <h2 className='text-secondary-200 font-bold uppercase '>Clicked Guesses</h2>
-          <div className="clicked-guesses">
-            {clickedGuesses.map((guess) => {
-              return <button key={uniqid()} className="text-3xl text-purple-400 p-2 border-2
-              border-primary-50 rounded-md">{guess}</button>
-            })}
-          </div>
-        </div>
-      </div>
 
-      <div className="hangman-picture-container flex items-center justify-center">
-        <p>Round: {gameControls.round}</p>
       </div>
-      {gameScreen}
     </div>
   );
 
