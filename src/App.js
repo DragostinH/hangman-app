@@ -62,7 +62,7 @@ export default function App() {
     setBoard(finalArr);
 
     for (let i = 0; i < randWord.length; i++) {
-      if (randWord[i] !== firstLetter && randWord[i] !== lastLetter && 
+      if (randWord[i] !== firstLetter && randWord[i] !== lastLetter &&
         !guessArr.includes(randWord[i])) {
         guessArr.push(randWord[i]);
       }
@@ -100,18 +100,17 @@ export default function App() {
       });
       setBoard(newBoard);
     } else {
-
-
       // Add the guess to the clicked guesses array
       setClickedGuesses(
         clickedGuesses.concat(guess),
       );
-
       // Reduce the number of tries by 1 and change picture
       setGameControls({
         ...gameControls,
         tries: gameControls.tries - 1,
       });
+      setHangmanPicture(hangmanPicts[10 - gameControls.tries]);
+
     }
     // if the guess is not in the word, remove the guess from the guesses array
     setGuesses(
@@ -119,7 +118,6 @@ export default function App() {
     );
 
 
-    setHangmanPicture(hangmanPicts[10 - gameControls.tries]);
   };
 
   // Check if there is local storage structure set. If there is update states to match
@@ -226,41 +224,37 @@ export default function App() {
 
 
   return (
-    <div className="App grid grid-rows-2 bg-secondary-200">
+    <div className="App flex flex-col gap-2 items-center justify-center bg-secondary-200">
       {gameSettingsScreen}
       {winLoseScreen}
       <div className="hangman-picture-container grid items-center justify-center col-span-3">
-        <p className='text-4xl relative text-center'>{board}</p>
-        <div className="clicked-guesses-container bg-slate-800 grid border-[1px] border-primary-50 rounded-lg gap-[2px] justify-center">
-          <div className="clicked-guesses flex">
-            {clickedGuesses.map((guess) => {
-              return <button key={uniqid()} className="text-md text-primary-50 p-[2px] rounded-md">{guess}, </button>
-            })}
+        <p className='text-4xl  text-center'>{board}</p>
+        <div className="hangman-pic-container max-w-xs">
+          <div className="clicked-guesses-container absolute bg-slate-800 grid border-[1px] border-primary-50 rounded-lg gap-[2px] justify-center">
+            <div className="clicked-guesses flex">
+              {clickedGuesses.map((guess) => {
+                return <button key={uniqid()} className="text-md text-primary-50 p-[2px] rounded-md">{guess}, </button>
+              })}
+            </div>
           </div>
-        </div>
-        <div className="hangman-pic-container max-w-xs"><img src={hangmanPicture} alt="hangman" className="hangman-picture rounded-lg border-[1px] border-primary-400" /></div>
-      </div>
-      <div className='game-buttons-container justify-center text-center p-12'>
-        <div className='game-buttons-container-inner'>
-          <button className='uppercase border-2 rounded-full p-1 absolute right-2 top-0 border-secondary-900 text-secondary-900 bg-primary-200'
-            onClick={pauseGame}>
-              <img className='w-[40px] h-[40px]' src={CogwheelIcon} alt="" />
-            </button>
+          <img src={hangmanPicture} alt="hangman" className="hangman-picture rounded-lg border-[1px] border-primary-400" />
         </div>
       </div>
-      <div className="game-container col-span-3 flex justify-center items-center gap-12">
-        <div className="guesses-container grid border-[1px] border-primary-400 bg-secondary-900 p-2 rounded-lg justify-center">
-          <div className="available-guesses grid grid-flow-col items-center justify-center gap-2 flex-wrap">
-            {guesses.map((guess) => {
-              return <button onClick={handleGuess}
-                className="text-xl p-1 border-2
+      <button className='uppercase border-2 rounded-full p-1 absolute right-2 top-0 border-secondary-900 text-secondary-900 bg-primary-200'
+        onClick={pauseGame}>
+        <img className='w-[40px] h-[40px]' src={CogwheelIcon} alt="" />
+      </button>
+      <div className="guesses-container grid border-[1px] border-primary-400 bg-secondary-900 p-2 rounded-lg justify-center">
+        <div className="available-guesses flex flex-wrap items-center justify-center gap-2">
+          {guesses.map((guess) => {
+            return <button onClick={handleGuess}
+              className="text-xl p-1 border-2
                 border-primary-50 rounded-md
                 bg-primary-700
                 text-secondary-200"
-                key={uniqid()}>{guess}
-              </button>
-            })}
-          </div>
+              key={uniqid()}>{guess}
+            </button>
+          })}
         </div>
       </div>
     </div>

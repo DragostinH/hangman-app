@@ -20,7 +20,7 @@ export default function GameSettingsScreen(props) {
 
 
     return (
-        <div className="gamescreen-overlay absolute bg-[rgba(0,0,0,0.15)] w-screen h-[90%] flex items-center justify-center">
+        <div className="gamescreen-overlay z-10 absolute bg-[rgba(0,0,0,0.15)] w-screen h-[90%] flex items-center justify-center">
             <div className="gamescreen-container border-4 border-primary-500 grid grid-cols-2 items-center bg-primary-900 w-fit h-fit rounded-xl p-8 text-primary-50">
                 <h1 className="text-4xl">Game Settings</h1>
                 <div className="border-[1px] p-6 rounded-lg">
