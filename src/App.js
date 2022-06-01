@@ -9,6 +9,7 @@ import LoseScreen from './components/LoseScreen';
 import createLocalStorageStructure from './scripts/createLocalStorageStructure';
 import updateLocalStorage from './scripts/updateLocalStorage';
 import hangmanPics from './scripts/hangmanPics';
+import CogwheelIcon from './assets/img/coghweel-icon.svg';
 
 
 
@@ -49,8 +50,8 @@ export default function App() {
     const firstLetter = randWord[0];
     const lastLetter = randWord[randWord.length - 1];
 
-    const finalArr = randWord.split('').map((letter, index) => {
-      if (letter === firstLetter || letter === lastLetter) {
+    const finalArr = randWord.split('').map((letter) => {
+      if ((letter === firstLetter || letter === lastLetter)) {
         return letter;
       } else {
         return ' _ ';
@@ -61,7 +62,8 @@ export default function App() {
     setBoard(finalArr);
 
     for (let i = 0; i < randWord.length; i++) {
-      if (randWord[i] !== firstLetter && randWord[i] !== lastLetter) {
+      if (randWord[i] !== firstLetter && randWord[i] !== lastLetter && 
+        !guessArr.includes(randWord[i])) {
         guessArr.push(randWord[i]);
       }
     };
@@ -224,34 +226,34 @@ export default function App() {
 
 
   return (
-    <div className="App grid grid-cols-3 grid-rows-1 bg-secondary-200">
+    <div className="App grid grid-rows-2 bg-secondary-200">
       {gameSettingsScreen}
       {winLoseScreen}
       <div className="hangman-picture-container grid items-center justify-center col-span-3">
-        <img src={hangmanPicture} alt="hangman" className="hangman-picture" />
-        <p className='text-4xl text-center'>{board}</p>
-        <div className="clicked-guesses-container bg-slate-800 grid border-[1px] border-primary-50 p-8 rounded-lg gap-4 justify-center">
-          <h2 className='text-secondary-200 font-bold uppercase '>Clicked Guesses</h2>
-          <div className="clicked-guesses">
+        <p className='text-4xl relative text-center'>{board}</p>
+        <div className="clicked-guesses-container bg-slate-800 grid border-[1px] border-primary-50 rounded-lg gap-[2px] justify-center">
+          <div className="clicked-guesses flex">
             {clickedGuesses.map((guess) => {
-              return <button key={uniqid()} className="text-3xl text-purple-400 p-2 border-2
-              border-primary-50 rounded-md">{guess}</button>
+              return <button key={uniqid()} className="text-md text-primary-50 p-[2px] rounded-md">{guess}, </button>
             })}
           </div>
         </div>
+        <div className="hangman-pic-container max-w-xs"><img src={hangmanPicture} alt="hangman" className="hangman-picture rounded-lg border-[1px] border-primary-400" /></div>
       </div>
-      <div className='game-buttons-container col-span-3 justify-center text-center p-12'>
+      <div className='game-buttons-container justify-center text-center p-12'>
         <div className='game-buttons-container-inner'>
-          <button className='uppercase border-2 px-8 py-4 rounded-lg border-secondary-900 text-secondary-900 bg-primary-200'
-            onClick={pauseGame}>Game Settings</button>
+          <button className='uppercase border-2 rounded-full p-1 absolute right-2 top-0 border-secondary-900 text-secondary-900 bg-primary-200'
+            onClick={pauseGame}>
+              <img className='w-[40px] h-[40px]' src={CogwheelIcon} alt="" />
+            </button>
         </div>
       </div>
       <div className="game-container col-span-3 flex justify-center items-center gap-12">
-        <div className="guesses-container grid border-[1px] border-primary-400 bg-secondary-900 p-8 rounded-lg gap-4 justify-center">
-          <div className="available-guesses flex items-center justify-center flex-wrap gap-4">
+        <div className="guesses-container grid border-[1px] border-primary-400 bg-secondary-900 p-2 rounded-lg justify-center">
+          <div className="available-guesses grid grid-flow-col items-center justify-center gap-2 flex-wrap">
             {guesses.map((guess) => {
               return <button onClick={handleGuess}
-                className="text-3xl p-2 border-2
+                className="text-xl p-1 border-2
                 border-primary-50 rounded-md
                 bg-primary-700
                 text-secondary-200"
@@ -260,8 +262,6 @@ export default function App() {
             })}
           </div>
         </div>
-
-
       </div>
     </div>
   );
